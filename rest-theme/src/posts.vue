@@ -10,7 +10,7 @@
 
 <script>
     export default {
-        ready() {
+        created() {
             this.getPosts();
         },
 
@@ -24,7 +24,7 @@
             getPosts() {
                 this.$http.get(wp.root + 'wp/v2/posts').then(function(response) {
                     this.posts = response.data;
-                    this.$dispatch('page-title', '');
+                    this.$emit('page-title', '');
                 }, function(response) {
                     console.log(response);
                 });

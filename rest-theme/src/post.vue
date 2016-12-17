@@ -5,11 +5,9 @@
 <template>
     <div class="post">
         <h1 class="entry-title" v-if="isSingle">{{ post.title.rendered }}</h1>
-        <h2 class="entry-title" v-else><a v-link="{ path: base_path + post.slug }">{{ post.title.rendered }}</a></h2>
+        <h2 class="entry-title" v-else><router-link :to="post.slug">{{ post.title.rendered }}</router-link></h2>
 
-        <div class="entry-content">
-            {{{ post.content.rendered }}}
-        </div>
+        <div class="entry-content" v-html="post.content.rendered"></div>
     </div>
 </template>
 
@@ -29,7 +27,7 @@
             }
         },
 
-        ready() {
+        created() {
             // If post hasn't been passed by prop
             if (!this.post.id) {
                 this.getPost();
@@ -40,15 +38,16 @@
         data() {
             return {
                 base_path: wp.base_path,
-                isSingle: false
+                isSingle: false,
+                currentRoute: window.location.pathname
             }
         },
 
         methods: {
             getPost() {
-                this.$http.get(wp.root + 'wp/v2/posts/' + this.$route.postId).then(function(response) {
+                this.$http.get(wp.root + 'wp/v2/posts/' + this.$route.meta.postId).then(function(response) {
                     this.post = response.data;
-                    this.$dispatch('page-title', this.post.title.rendered);
+                    this.$parent.$emit('page-title', this.post.title.rendered);
                 }, function(response) {
                     console.log(response);
                 });
